@@ -1,33 +1,30 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
-                echo 'Installing dependencies globally for Jenkins user...'
-                // --break-system-packages bypasses Debian's managed environment lock in pipeline scripts
-                sh 'pip install --break-system-packages -r requirements.txt'
+                echo 'Installing dependencies using pip globally...'
+                sh 'pip install --break-system-packages -r requirements.txt || pip install -r requirements.txt || python3 -m pip install -r requirements.txt'
             }
         }
         stage('Test') {
             steps {
-                echo 'Running unit tests with Pytest...'
-                sh 'pytest'
+                echo 'Running unit tests using pytest...'
+                sh 'pytest || python3 -m pytest'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying application to Staging Environment...'
+                echo 'Deploying application to staging environment...'
             }
         }
     }
-
     post {
-        always {
-            echo "Execution complete."
+        success {
+            echo 'Build Succeeded!'
         }
         failure {
-            echo "Build Failed! Sending alert notification..."
+            echo 'Build Failed! Sending alert notification...'
         }
     }
 }
