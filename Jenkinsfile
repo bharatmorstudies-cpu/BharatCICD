@@ -2,43 +2,42 @@ pipeline {
     agent any
 
     environment {
-        PYTHONPATH = '.'
+        // Define your staging environment deployment path or target
+        STAGING_DIR = "/var/www/flask-staging"
     }
 
     stages {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'python3 -m venv venv'
-                sh './venv/bin/pip install --upgrade pip'
-                sh './venv/bin/pip install -r requirements.txt'
+                sh 'pip install -r requirements.txt'
             }
         }
-        
         stage('Test') {
             steps {
                 echo 'Running unit tests...'
-                sh './venv/bin/pytest'
+                sh 'pytest'
             }
         }
-        
         stage('Deploy') {
             steps {
-                echo 'Deploying application to Staging Environment...'
-                // Mock deployment script
-                sh 'echo "Application successfully deployed to staging!"'
+                echo 'Deploying to staging environment...'
+                // Simple staging mock deployment deployment execution
+                sh "mkdir -p ${STAGING_DIR} && cp -R * ${STAGING_DIR}/"
             }
         }
     }
-    
+
     post {
         success {
-            echo 'Build Succeeded! Sending email notification...'
-            // Optional: mail to: 'admin@example.com', subject: 'Success'
+            mail to: 'your-email@example.com',
+                 subject: "SUCCESS: Jenkins Build Notification: ${currentBuild.fullDisplayName}",
+                 body: "The pipeline executed successfully! Check details at: ${env.BUILD_URL}"
         }
         failure {
-            echo 'Build Failed! Sending alert notification...'
-            // Optional: mail to: 'admin@example.com', subject: 'Failure'
+            mail to: 'your-email@example.com',
+                 subject: "FAILURE: Jenkins Build Notification: ${currentBuild.fullDisplayName}",
+                 body: "The pipeline failed during execution. Check logs at: ${env.BUILD_URL}"
         }
     }
 }

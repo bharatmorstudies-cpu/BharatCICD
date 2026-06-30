@@ -1,58 +1,23 @@
-\# Flask CI/CD Web Application
+# Flask CI/CD Pipeline Project
 
+This project establishes automated CI/CD automation processes utilizing Jenkins Pipelines and GitHub Actions.
 
+## Prerequisites
+- Python 3.10+
+- Jenkins Server with Python ecosystem plugins installed
+- GitHub Account
 
-A Python Flask application featuring fully integrated CI/CD pipelines through Jenkins and GitHub Actions.
+## Jenkins Pipeline Setup
+1. Define a new **Pipeline project** inside your Jenkins server dashboard.
+2. Configure a Build Trigger for **GitHub hook trigger for GITScm polling** to catch main branch changes automatically.
+3. Set the Pipeline definition to **Pipeline script from SCM**, pick Git, and point to your project URL.
 
+## GitHub Actions Configuration
+The system uses automated environment rules contingent on branches:
+- **Staging Branch Push**: Triggers test, package validation, and execution deployments directly to the staging layer.
+- **Tagged Release (`v*`)**: Initiates final deployments to production systems.
 
-
-\## Prerequisites
-
-\- Python 3.8+
-
-\- Jenkins Server
-
-\- GitHub Account
-
-
-
-\## Installation \& Local Execution
-
-1\. Install dependencies:
-
-&#x20;  ```bash
-
-&#x20;  pip install -r requirements.txt
-
-&#x20;  ```
-
-2\. Run local tests:
-
-&#x20;  ```bash
-
-&#x20;  pytest
-
-&#x20;  ```
-
-3\. Boot the application:
-
-&#x20;  ```bash
-
-&#x20;  python app.py
-
-&#x20;  ```
-
-
-
-\## CI/CD Workflow Detail
-
-\- \*\*Jenkins Pipeline\*\*: Triggers automatically on changes. It builds the virtual environment, fires `pytest`, and handles staging deployment simulation.
-
-\- \*\*GitHub Actions\*\*: 
-
-&#x20; - Pushing to `staging` initiates a deployment workflow to staging.
-
-&#x20; - Publishing a release tag triggers a deployment workflow to production.
-
-
-
+### Configuration Secrets
+Ensure you register the following configurations in **Settings -> Secrets and variables -> Actions** inside GitHub:
+- `STAGING_API_TOKEN`: Integration authorization token for staging environments.
+- `PROD_DEPLOY_KEY`: SSH or API infrastructure parameters targeting production networks.
